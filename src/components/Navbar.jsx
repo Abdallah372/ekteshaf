@@ -24,29 +24,14 @@ const Navbar = () => {
             <Recycle size={24} strokeWidth={2.5} />
           </motion.div>
           <div className="flex flex-col text-right">
-            <h1 className="text-2xl font-black text-primary tracking-tight leading-none">إيكو سورت <span className="text-secondary text-base">v4.0</span></h1>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">AI Waste Management</span>
+            <h1 className="text-2xl font-black text-white tracking-tight leading-none">إكتشاف <span className="text-primary text-base">AI</span></h1>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Minimalist Intelligence</span>
           </div>
         </div>
 
-        {/* Global SaaS Actions */}
-        <div className="hidden md:flex items-center gap-8">
-          <div className="flex items-center gap-6 text-sm font-bold text-slate-500 border-l border-slate-200 ml-6 pl-6">
-            <button className="hover:text-primary transition-colors hover:scale-105 active:scale-95 flex items-center gap-2">
-              <LayoutDashboard size={18} /> لوحة التحكم
-            </button>
-            <button className="hover:text-primary transition-colors hover:scale-105 active:scale-95 flex items-center gap-2">
-              <Settings size={18} /> الإعدادات
-            </button>
-          </div>
-          <button className="p-3 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all">
-            <User size={20} className="text-slate-600" />
-          </button>
-        </div>
-
-        {/* Brand Mobile Button */}
-        <button className="md:hidden p-3 bg-primary text-white rounded-2xl shadow-lg">
-          <User size={20} />
+        {/* Action */}
+        <button className="px-5 py-2 bg-white/5 border border-white/10 rounded-xl font-bold text-[10px] hover:bg-white/10 transition-all text-slate-300">
+          دخول
         </button>
       </div>
     </nav>

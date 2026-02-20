@@ -25,7 +25,7 @@ const Hero = ({ onStart }) => {
         >
           <h1 className="text-7xl lg:text-9xl font-black text-white leading-tight tracking-tighter">
             الفرز بذكاء <br />
-            <span className="gradient-text">إيكو سورت</span>
+            <span className="gradient-text">إكتشاف AI</span>
           </h1>
           <p className="text-lg lg:text-xl text-slate-400 font-medium max-w-2xl mx-auto">
             مستقبل الاستدامة يبدأ هنا. صور، حلل، وساهم بلمسة واحدة.

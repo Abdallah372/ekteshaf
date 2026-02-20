@@ -47,7 +47,7 @@ function App() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 opacity-40">
            <div className="flex items-center gap-2">
               <Recycle size={18} className="text-primary" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-100">إيكو سورت AI &copy; 2026</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-100">إكتشاف AI &copy; 2026</span>
            </div>
            <div className="text-[10px] font-bold text-slate-100">بإشراف عبدالله بن محمد العبادي</div>
         </div>

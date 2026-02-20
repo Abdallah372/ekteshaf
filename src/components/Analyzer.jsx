@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Upload, Brain, SwitchCamera, X, Info, LayoutGrid, Loader2 } from 'lucide-react';
 import modelService from '../services/modelService';
-import statsService from '../services/statsService';
 import ResultCard from './ResultCard';
 
 const Analyzer = () => {
@@ -77,9 +76,6 @@ const Analyzer = () => {
       await new Promise(r => setTimeout(r, 1200));
       const classification = await modelService.classifyWaste(imageRef.current);
       setResult(classification);
-      if (!classification.lowConfidence) {
-        statsService.addScan(classification);
-      }
     } catch (err) {
       setError("فشل محرك التحليل الذكي");
     } finally {
@@ -120,16 +116,24 @@ const Analyzer = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-white/40 backdrop-blur border border-white/50 rounded-[32px] overflow-hidden"
+            className="glass-panel overflow-hidden border-white/5 bg-slate-900/40"
           >
-            <div className="p-10 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                {modelService.getModelCategories(activeModel).map((cat, i) => (
-                 <div key={i} className="glass-card p-5 bg-white/60 hover:bg-white transition-all flex flex-col items-center gap-3 border-white">
-                    <div className={`w-12 h-12 rounded-2xl ${cat.color || 'bg-slate-200'} flex items-center justify-center text-white shadow-lg`}>
-                       <LayoutGrid size={20} />
+                 <motion.div 
+                   key={i} 
+                   whileHover={{ y: -5, scale: 1.02 }}
+                   className="glass-card p-4 bg-slate-800/20 border-white/5 hover:border-primary/30 transition-all flex flex-col items-center text-center gap-3"
+                 >
+                    <div className={`w-14 h-14 rounded-2xl ${cat.color || 'bg-primary/20'} flex items-center justify-center text-white shadow-xl relative group`}>
+                       <div className="absolute inset-0 bg-inherit blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
+                       <LayoutGrid size={24} className="relative z-10" />
                     </div>
-                    <span className="font-black text-[11px] text-primary">{cat.arabic}</span>
-                 </div>
+                    <div>
+                       <h4 className="font-black text-xs text-white mb-1">{cat.arabic}</h4>
+                       <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">{cat.name}</span>
+                    </div>
+                 </motion.div>
                ))}
             </div>
           </motion.div>
