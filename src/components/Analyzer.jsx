@@ -89,41 +89,29 @@ const Analyzer = () => {
 
   return (
     <div className="space-y-10">
-      {/* SaaS Controls Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6 glass-card p-6 border-white/80">
-         <div className="flex items-center gap-5">
-            <div className="p-3 bg-primary text-white rounded-2xl shadow-2xl">
-               <Brain size={24} className="animate-pulse" />
+      {/* Minimal Controls */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 glass-card p-5 border-white/5">
+         <div className="flex items-center gap-4">
+            <div className="p-2.5 bg-primary/20 text-primary rounded-xl">
+               <Brain size={20} />
             </div>
-            <div>
-               <h3 className="text-xl font-black text-primary leading-tight">محرك الرؤية الحاسوبية</h3>
-               <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Live AI Inference Mode</p>
-            </div>
+            <h3 className="text-lg font-black text-white">محرك الرؤية</h3>
          </div>
 
-         <div className="flex flex-col items-center gap-2">
-            <div className="inline-flex bg-slate-100 p-1.5 rounded-[20px] border border-slate-200">
-               <button 
-                  onClick={() => handleModelChange("mini")}
-                  className={`px-8 py-2.5 rounded-[15px] text-xs font-black transition-all ${activeModel === "mini" ? 'bg-white text-primary shadow-sm ring-1 ring-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
-               >
-                  المصغر (الأسرع)
-               </button>
-               <button 
-                  onClick={() => handleModelChange("huge")}
-                  className={`px-8 py-2.5 rounded-[15px] text-xs font-black transition-all ${activeModel === "huge" ? 'bg-white text-primary shadow-sm ring-1 ring-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
-               >
-                  الشامل (الأدق)
-               </button>
-            </div>
+         <div className="flex bg-slate-800/50 p-1 rounded-2xl border border-white/5">
+            <button 
+               onClick={() => handleModelChange("mini")}
+               className={`px-6 py-2 rounded-xl text-[10px] font-black transition-all ${activeModel === "mini" ? 'bg-primary text-slate-950 shadow-lg glow-primary' : 'text-slate-400 hover:text-white'}`}
+            >
+               سريع
+            </button>
+            <button 
+               onClick={() => handleModelChange("huge")}
+               className={`px-6 py-2 rounded-xl text-[10px] font-black transition-all ${activeModel === "huge" ? 'bg-primary text-slate-950 shadow-lg glow-primary' : 'text-slate-400 hover:text-white'}`}
+            >
+               دقيق
+            </button>
          </div>
-
-         <button 
-            onClick={() => setShowModelCategories(!showModelCategories)}
-            className="flex items-center gap-3 px-8 py-3 bg-white/60 backdrop-blur rounded-[20px] font-black text-xs text-slate-700 hover:bg-white border border-slate-100 transition-all shadow-sm"
-         >
-            <LayoutGrid size={18} /> استعراض الفئات
-         </button>
       </div>
 
       <AnimatePresence>
