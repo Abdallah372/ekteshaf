@@ -4,8 +4,8 @@ import { WASTE_TYPES, MODEL_LABEL_MAP } from '../utils/labels';
 class ModelService {
   constructor() {
     this.models = {
-      mini: { model: null, labels: [], path: '/models/mini/' },
-      huge: { model: null, labels: [], path: '/models/huge/' }
+      mini: { model: null, labels: [], path: `${import.meta.env.BASE_URL}models/mini/` },
+      huge: { model: null, labels: [], path: `${import.meta.env.BASE_URL}models/huge/` }
     };
     this.currentSize = "mini";
     this.loading = false;
