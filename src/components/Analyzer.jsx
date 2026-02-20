@@ -119,7 +119,7 @@ const Analyzer = () => {
       </div>
 
       <div className="glass-panel overflow-hidden border-white/5 bg-slate-900/40">
-         <div className="p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+         <div className="p-4 sm:p-8 grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
             {inventory.map((item, id) => (
               <motion.div 
                 key={id} 
@@ -184,20 +184,20 @@ const Analyzer = () => {
               </AnimatePresence>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 w-full mt-8">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 w-full mt-8">
                <button 
                   onClick={bootCamera}
                   disabled={isProcessing || cameraActive}
-                  className="h-20 bg-primary text-slate-950 rounded-[24px] font-black text-lg hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
+                  className="h-16 sm:h-20 bg-primary text-slate-950 rounded-[20px] sm:rounded-[24px] font-black text-base sm:text-lg hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
                >
-                  <Camera /> الكاميرا
+                  <Camera size={20} /> الكاميرا
                </button>
                <button 
                   onClick={() => fileRef.current.click()}
                   disabled={isProcessing || cameraActive}
-                  className="h-20 bg-white/5 border border-white/10 text-white rounded-[24px] font-black text-lg hover:bg-white/10 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
+                  className="h-16 sm:h-20 bg-white/5 border border-white/10 text-white rounded-[20px] sm:rounded-[24px] font-black text-base sm:text-lg hover:bg-white/10 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
                >
-                  <Upload /> رفع صورة
+                  <Upload size={20} /> رفع صورة
                </button>
                <input type="file" ref={fileRef} className="hidden" accept="image/*" onChange={(e) => {
                   const f = e.target.files[0];

@@ -18,11 +18,11 @@ const Hero = ({ onStart }) => {
         </motion.div>
 
         <div className="space-y-8">
-          <h1 className="text-7xl lg:text-[10rem] font-black text-white leading-[0.85] tracking-tighter antialiased">
+          <h1 className="text-5xl sm:text-7xl lg:text-[10rem] font-black text-white leading-[0.85] tracking-tighter antialiased">
             الفرز بذكاء <br />
             <span className="gradient-text">إكتشاف AI</span>
           </h1>
-          <p className="text-lg lg:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
             مستقبل الاستدامة يبدأ هنا. محرك رؤية حاسوبية فائقة السرعة لتحليل النفايات والمساهمة في بيئة أنظف بلمسة واحدة.
           </p>
         </div>

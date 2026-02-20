@@ -27,9 +27,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full font-bold text-[9px] text-slate-400 uppercase tracking-widest">
-           إصدار الإنتاج v6.0
-        </div>
       </div>
     </nav>
   );

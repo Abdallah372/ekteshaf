@@ -35,7 +35,7 @@ const App = () => {
                  </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-16">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-16">
                  <div className="space-y-4">
                     <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">الباحث</h4>
                     <p className="text-xs font-bold text-slate-100">عبدالله بن محمد العبادي</p>
