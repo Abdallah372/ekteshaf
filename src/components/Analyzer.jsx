@@ -1,93 +1,99 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Upload, Brain, SwitchCamera, X, Info, LayoutGrid, Loader2 } from 'lucide-react';
-import modelService from '../services/modelService';
+import { 
+  Camera, Upload, Brain, SwitchCamera, X, Info, LayoutGrid, Loader2,
+  CupSoda, FileText, Container, FlaskConical, Shirt, Footprints, Package, Apple, Battery, HelpCircle 
+} from 'lucide-react';
+import engine from '../services/modelService';
 import ResultCard from './ResultCard';
 
-const Analyzer = () => {
-  const [preview, setPreview] = useState(null);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const [activeModel, setActiveModel] = useState("mini");
-  const [showModelCategories, setShowModelCategories] = useState(true);
-  const [categories, setCategories] = useState([]);
+const CategoryIcons = {
+  CupSoda, FileText, Container, FlaskConical, Shirt, Footprints, Package, Apple, Battery, HelpCircle
+};
 
-  const fileInputRef = useRef(null);
-  const imageRef = useRef(null);
+const Analyzer = () => {
+  const [stream, setStream] = useState(null);
+  const [result, setResult] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [mode, setMode] = useState('mini');
+  const [inventory, setInventory] = useState([]);
+
+  const fileRef = useRef(null);
+  const viewRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    loadSelectedModel(activeModel);
+    bootstrap(mode);
   }, []);
 
-  const loadSelectedModel = async (size) => {
+  const bootstrap = async (target) => {
     try {
-      modelService.setModelSize(size);
-      await modelService.loadModel();
-      setCategories(modelService.getModelCategories(size));
+      engine.active = target;
+      await engine.initialize();
+      setInventory(engine.getCategories(target));
       setError(null);
     } catch (err) {
-      setError("فشل تحميل نموذج الذكاء الاصطناعي");
+      setError("Model initialization failed");
     }
   };
 
-  const handleModelChange = (size) => {
-    setActiveModel(size);
-    loadSelectedModel(size);
+  const switchMode = (target) => {
+    setMode(target);
+    bootstrap(target);
     setResult(null);
   };
 
-  const startCamera = async () => {
+  const bootCamera = async () => {
     try {
-      setIsCameraOpen(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      if (videoRef.current) videoRef.current.srcObject = stream;
+      setCameraActive(true);
+      const media = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      if (videoRef.current) videoRef.current.srcObject = media;
     } catch (err) {
-      setError("يرجى منح صلاحية الكاميرا للبدء");
-      setIsCameraOpen(false);
+      setError("Please grant camera access");
+      setCameraActive(false);
     }
   };
 
-  const stopCamera = () => {
+  const killCamera = () => {
     if (videoRef.current?.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject.getTracks().forEach(t => t.stop());
     }
-    setIsCameraOpen(false);
+    setCameraActive(false);
   };
 
-  const capturePhoto = () => {
+  const snapshot = () => {
     if (videoRef.current && canvasRef.current) {
-      const canvas = canvasRef.current;
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      canvas.getContext('2d').drawImage(videoRef.current, 0, 0);
-      setPreview(canvas.toDataURL('image/jpeg'));
+      const c = canvasRef.current;
+      c.width = videoRef.current.videoWidth;
+      c.height = videoRef.current.videoHeight;
+      c.getContext('2d').drawImage(videoRef.current, 0, 0);
+      setStream(c.toDataURL('image/jpeg'));
       setResult(null);
-      stopCamera();
+      killCamera();
     }
   };
 
-  const processImage = async () => {
-    if (!preview) return;
-    setLoading(true);
+  const runInterference = async () => {
+    if (!stream) return;
+    setIsProcessing(true);
     try {
-      // Simulate specialized AI processing delay for UX feel
-      await new Promise(r => setTimeout(r, 1200));
-      const classification = await modelService.classifyWaste(imageRef.current);
-      setResult(classification);
+      await new Promise(r => setTimeout(r, 800));
+      const output = await engine.predict(viewRef.current);
+      setResult(output);
     } catch (err) {
-      setError("فشل محرك التحليل الذكي");
+      setError("Vision engine failure");
     } finally {
-      setLoading(false);
+      setIsProcessing(false);
     }
   };
 
   return (
     <div className="space-y-10">
-      {/* Minimal Controls */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 glass-card p-5 border-white/5">
          <div className="flex items-center gap-4">
             <div className="p-2.5 bg-primary/20 text-primary rounded-xl">
@@ -98,88 +104,80 @@ const Analyzer = () => {
 
          <div className="flex bg-slate-800/50 p-1 rounded-2xl border border-white/5">
             <button 
-               onClick={() => handleModelChange("mini")}
-               className={`px-6 py-2 rounded-xl text-[10px] font-black transition-all ${activeModel === "mini" ? 'bg-primary text-slate-950 shadow-lg glow-primary' : 'text-slate-400 hover:text-white'}`}
+               onClick={() => switchMode('mini')}
+               className={`px-6 py-2 rounded-xl text-[10px] font-black transition-all ${mode === 'mini' ? 'bg-primary text-slate-950 glow-primary' : 'text-slate-400 hover:text-white'}`}
             >
                سريع
             </button>
             <button 
-               onClick={() => handleModelChange("huge")}
-               className={`px-6 py-2 rounded-xl text-[10px] font-black transition-all ${activeModel === "huge" ? 'bg-primary text-slate-950 shadow-lg glow-primary' : 'text-slate-400 hover:text-white'}`}
+               onClick={() => switchMode('huge')}
+               className={`px-6 py-2 rounded-xl text-[10px] font-black transition-all ${mode === 'huge' ? 'bg-primary text-slate-950 glow-primary' : 'text-slate-400 hover:text-white'}`}
             >
                دقيق
             </button>
          </div>
       </div>
 
-      <AnimatePresence>
-        {showModelCategories && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="glass-panel overflow-hidden border-white/5 bg-slate-900/40"
-          >
-            <div className="p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-               {categories.map((cat, i) => (
-                 <motion.div 
-                   key={i} 
-                   whileHover={{ y: -5, scale: 1.02 }}
-                   className="glass-card p-4 bg-slate-800/20 border-white/5 hover:border-primary/30 transition-all flex flex-col items-center text-center gap-3"
-                 >
-                    <div className={`w-14 h-14 rounded-2xl ${cat.color || 'bg-primary/20'} flex items-center justify-center text-white shadow-xl relative group`}>
-                       <div className="absolute inset-0 bg-inherit blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
-                       <LayoutGrid size={24} className="relative z-10" />
-                    </div>
-                    <div>
-                       <h4 className="font-black text-xs text-white mb-1">{cat.arabic}</h4>
-                       <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">{cat.name}</span>
-                    </div>
-                 </motion.div>
-               ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="glass-panel overflow-hidden border-white/5 bg-slate-900/40">
+         <div className="p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {inventory.map((item, id) => (
+              <motion.div 
+                key={id} 
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="glass-card p-4 bg-slate-800/10 border-white/5 hover:border-primary/20 transition-all flex flex-col items-center text-center gap-3"
+              >
+                 <div className={`w-14 h-14 rounded-2xl ${item.color || 'bg-primary/10'} flex items-center justify-center text-white relative group`}>
+                    <div className="absolute inset-0 bg-inherit blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
+                    {(() => {
+                        const Icon = CategoryIcons[item.icon] || LayoutGrid;
+                        return <Icon size={24} className="relative z-10" />;
+                    })()}
+                 </div>
+                 <div>
+                    <h4 className="font-black text-xs text-white mb-1">{item.arabic}</h4>
+                    <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">{item.name}</span>
+                 </div>
+              </motion.div>
+            ))}
+         </div>
+      </div>
 
       <div className="grid lg:grid-cols-12 gap-10 items-stretch">
-        {/* Interaction Zone */}
         <div className="lg:col-span-7 flex flex-col">
-          <div className="glass-card p-6 flex-grow flex flex-col items-center justify-center border-white/80 relative group">
-            
-            <div className="relative w-full aspect-video rounded-[24px] bg-slate-900/5 overflow-hidden border-2 border-dashed border-slate-200 group-hover:border-primary/20 transition-all flex items-center justify-center">
+          <div className="glass-card p-6 flex-grow flex flex-col items-center justify-center border-white/5 relative group">
+            <div className="relative w-full aspect-video rounded-[24px] bg-slate-950/20 overflow-hidden border-2 border-dashed border-white/5 group-hover:border-primary/20 transition-all flex items-center justify-center">
               <AnimatePresence mode="wait">
-                {isCameraOpen ? (
-                  <motion.div key="c" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0">
+                {cameraActive ? (
+                  <motion.div key="vid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0">
                     <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent flex items-end justify-center pb-12">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent flex items-end justify-center pb-12">
                        <div className="flex gap-6">
-                         <button onClick={capturePhoto} className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-3xl hover:scale-105 active:scale-95 transition-all text-primary ring-8 ring-white/10">
+                         <button onClick={snapshot} className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all text-primary">
                             <Camera size={32} />
                          </button>
-                         <button onClick={stopCamera} className="w-20 h-20 bg-black/60 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-red-500/80 transition-all">
+                         <button onClick={killCamera} className="w-20 h-20 bg-white/10 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-red-500/80 transition-all">
                             <X size={32} />
                          </button>
                        </div>
                     </div>
                   </motion.div>
-                ) : preview ? (
-                  <motion.div key="p" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0">
-                    <img ref={imageRef} src={preview} alt="Input" className="w-full h-full object-cover" onLoad={processImage} />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                       <button onClick={startCamera} className="btn-primary py-3 px-6 text-sm">
-                          <SwitchCamera size={18} /> التغيير
+                ) : stream ? (
+                  <motion.div key="img" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0">
+                    <img ref={viewRef} src={stream} alt="Source" className="w-full h-full object-cover" onLoad={runInterference} />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                       <button onClick={bootCamera} className="btn-primary py-3 px-8">
+                          <SwitchCamera size={18} /> إعادة المسح
                        </button>
                     </div>
                   </motion.div>
                 ) : (
-                  <motion.div key="e" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center p-12">
-                     <div className="w-24 h-24 bg-white rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-2xl text-secondary animate-float">
+                  <motion.div key="init" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center p-12">
+                     <div className="w-24 h-24 bg-white/5 rounded-[32px] flex items-center justify-center mx-auto mb-8 text-primary">
                         <Camera size={48} />
                      </div>
-                     <h4 className="text-2xl font-black text-primary mb-3">ابدأ الفرز الذكي</h4>
-                     <p className="text-sm font-bold text-slate-400 max-w-xs mx-auto leading-relaxed">
-                        استخدم الكاميرا أو قم برفع صورة لفرز النفايات بذكاء اصطناعي فائق السرعة.
+                     <h4 className="text-2xl font-black text-white mb-3">مسح ذكي</h4>
+                     <p className="text-sm font-bold text-slate-500 max-w-xs mx-auto">
+                        قم بتفعيل الكاميرا أو رفع صورة لبدء التحليل العصبي للنفايات.
                      </p>
                   </motion.div>
                 )}
@@ -188,55 +186,56 @@ const Analyzer = () => {
 
             <div className="grid grid-cols-2 gap-6 w-full mt-8">
                <button 
-                  onClick={startCamera}
-                  disabled={loading || isCameraOpen}
-                  className="h-20 bg-primary text-white rounded-[24px] font-black text-lg shadow-2xl shadow-primary/20 hover:bg-slate-900 transition-all disabled:opacity-50 flex items-center justify-center gap-4 group"
+                  onClick={bootCamera}
+                  disabled={isProcessing || cameraActive}
+                  className="h-20 bg-primary text-slate-950 rounded-[24px] font-black text-lg hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
                >
-                  <Camera className="group-hover:scale-110 transition-transform" /> الكاميرا
+                  <Camera /> الكاميرا
                </button>
                <button 
-                  onClick={() => fileInputRef.current.click()}
-                  disabled={loading || isCameraOpen}
-                  className="h-20 bg-white border-2 border-slate-100 text-primary rounded-[24px] font-black text-lg hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center justify-center gap-4 group"
+                  onClick={() => fileRef.current.click()}
+                  disabled={isProcessing || cameraActive}
+                  className="h-20 bg-white/5 border border-white/10 text-white rounded-[24px] font-black text-lg hover:bg-white/10 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
                >
-                  <Upload className="group-hover:scale-110 transition-transform" /> رفع صورة
+                  <Upload /> رفع صورة
                </button>
-               <input type="file" ref={fileInputRef} onChange={(e) => {
+               <input type="file" ref={fileRef} className="hidden" accept="image/*" onChange={(e) => {
                   const f = e.target.files[0];
                   if(f) {
-                     const r = new FileReader(); r.onload = (ev) => { setPreview(ev.target.result); setResult(null); }; r.readAsDataURL(f);
+                     const r = new FileReader(); 
+                     r.onload = (v) => { setStream(v.target.result); setResult(null); }; 
+                     r.readAsDataURL(f);
                   }
-               }} className="hidden" accept="image/*" />
+               }} />
             </div>
           </div>
         </div>
 
-        {/* Results Hub */}
         <div className="lg:col-span-5">
            <AnimatePresence mode="wait">
-             {loading ? (
+             {isProcessing ? (
                <motion.div 
-                 key="l" 
+                 key="load" 
                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                  className="glass-card h-full flex flex-col items-center justify-center p-12 text-center"
                >
                   <div className="relative w-48 h-48 mb-12">
-                     <div className="absolute inset-0 rounded-[40px] border-[16px] border-slate-50" />
-                     <div className="absolute inset-0 rounded-[40px] border-[16px] border-secondary border-t-transparent animate-spin" />
-                     <Loader2 className="absolute inset-0 m-auto text-secondary animate-spin-slow" size={64} />
+                     <div className="absolute inset-0 rounded-[40px] border-[16px] border-white/5" />
+                     <div className="absolute inset-0 rounded-[40px] border-[16px] border-primary border-t-transparent animate-spin" />
+                     <Loader2 className="absolute inset-0 m-auto text-primary opacity-20" size={64} />
                   </div>
-                  <h4 className="text-3xl font-black text-primary mb-2">جاري المعالجة...</h4>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
-                     Neural Network Inference in Progress
+                  <h4 className="text-3xl font-black text-white mb-2">جاري التحليل...</h4>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                     Inference in progress
                   </p>
                </motion.div>
              ) : result ? (
-               <ResultCard key="r" result={result} />
+               <ResultCard key="res" result={result} />
              ) : (
-               <div className="glass-card h-full border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-20 text-slate-300">
+               <div className="glass-card h-full border-2 border-dashed border-white/5 flex flex-col items-center justify-center p-20 text-slate-700">
                   <Info size={64} className="mb-8 opacity-20" />
-                  <h4 className="text-xl font-black opacity-40">بانتظار البيانات</h4>
-                  <p className="text-xs font-bold opacity-30 mt-2">صور المنتج للحصول على التحليل</p>
+                  <h4 className="text-xl font-black opacity-40">جاهز</h4>
+                  <p className="text-xs font-bold opacity-30 mt-2">بانتظار بيانات الإدخال</p>
                </div>
              )}
            </AnimatePresence>

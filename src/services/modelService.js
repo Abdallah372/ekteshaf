@@ -3,106 +3,99 @@ import { WASTE_TYPES, MODEL_LABEL_MAP } from '../utils/labels';
 
 class ModelService {
   constructor() {
-    this.models = {
-      mini: { model: null, labels: [], path: `${import.meta.env.BASE_URL}models/mini/` },
-      huge: { model: null, labels: [], path: `${import.meta.env.BASE_URL}models/huge/` }
+    this.configs = {
+      mini: { path: `${import.meta.env.BASE_URL}models/mini/` },
+      huge: { path: `${import.meta.env.BASE_URL}models/huge/` }
     };
-    this.currentSize = "mini";
-    this.loading = false;
-    this.confidenceThreshold = 0.65; // Minimum confidence to accept a prediction
+
+    this.cache = new Map();
+    this.activeSize = 'mini';
+    this.isBootstraping = false;
+    this.threshold = 0.65;
   }
 
-  setModelSize(size) {
-    if (this.models[size]) {
-      this.currentSize = size;
-      return true;
+  set active(size) {
+    if (this.configs[size]) {
+      this.activeSize = size;
     }
-    return false;
   }
 
-  /**
-   * Loads the model of the current size if it hasn't been loaded yet.
-   */
-  async loadModel(size = this.currentSize) {
-    const config = this.models[size];
-    if (config.model) return config.model;
+  get active() {
+    return this.activeSize;
+  }
 
-    if (this.loading) {
-      while (this.loading) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      return this.models[size].model;
+  async initialize(size = this.activeSize) {
+    if (this.cache.has(size)) return this.cache.get(size).model;
+
+    if (this.isBootstraping) {
+      return new Promise((resolve) => {
+        const check = setInterval(() => {
+          if (!this.isBootstraping) {
+            clearInterval(check);
+            resolve(this.cache.get(size)?.model);
+          }
+        }, 100);
+      });
     }
 
-    this.loading = true;
+    this.isBootstraping = true;
 
     try {
-      const checkpointURL = config.path + "model.json";
-      const metadataURL = config.path + "metadata.json";
+      const config = this.configs[size];
+      const model = await tmImage.load(
+        `${config.path}model.json`,
+        `${config.path}metadata.json`
+      );
 
-      console.log(`Loading ${size} Model from ${config.path}...`);
-      config.model = await tmImage.load(checkpointURL, metadataURL);
-      config.labels = config.model.getClassLabels();
-      
-      console.log(`${size} Model Loaded Successfully. Labels:`, config.labels);
-      return config.model;
-    } catch (err) {
-      console.error(`Model Loading Error (${size}):`, err);
-      throw new Error(`فشل تحميل نموذج ${size}. يرجى التحقق من الملفات.`);
+      const labels = model.getClassLabels();
+      this.cache.set(size, { model, labels });
+
+      return model;
+    } catch (error) {
+      console.error(`[Engine] Failed to load ${size}:`, error);
+      throw error;
     } finally {
-      this.loading = false;
+      this.isBootstraping = false;
     }
   }
 
-  /**
-   * Returns categories covered by a specific model.
-   */
-  getModelCategories(size = this.currentSize) {
-    const labels = this.models[size].labels;
-    return labels.map(label => {
-      const key = MODEL_LABEL_MAP[label.toLowerCase()] || label.toLowerCase();
-      return WASTE_TYPES[key] || { arabic: label, name: label };
+  getCategories(size = this.activeSize) {
+    const data = this.cache.get(size);
+    if (!data) return [];
+
+    return data.labels.map(label => {
+      const id = MODEL_LABEL_MAP[label.toLowerCase()] || label.toLowerCase();
+      return WASTE_TYPES[id] || { arabic: label, name: label };
     });
   }
 
-  /**
-   * Classifies an image and handles low confidence as "Unknown".
-   */
-  async classifyWaste(imageElement) {
-    try {
-      const model = await this.loadModel();
-      const predictions = await model.predict(imageElement);
-      
-      // Sort predictions by probability descending
-      predictions.sort((a, b) => b.probability - a.probability);
-      
-      const topPrediction = predictions[0];
-      const confidence = topPrediction.probability;
-      
-      // Handle "Unknown" if confidence is too low
-      if (confidence < this.confidenceThreshold) {
-        return {
-          ...WASTE_TYPES.unknown,
-          confidence: (confidence * 100).toFixed(1),
-          lowConfidence: true
-        };
-      }
+  async predict(source) {
+    const engine = await this.initialize();
+    const raw = await engine.predict(source);
+    
+    raw.sort((a, b) => b.probability - a.probability);
+    
+    const top = raw[0];
+    const score = top.probability;
 
-      const label = topPrediction.className.toLowerCase();
-      const internalKey = MODEL_LABEL_MAP[label] || label;
-      const categoryData = WASTE_TYPES[internalKey] || WASTE_TYPES.unknown;
-
+    if (score < this.threshold) {
       return {
-        ...categoryData,
-        confidence: (confidence * 100).toFixed(1),
-        categoryKey: internalKey
+        ...WASTE_TYPES.unknown,
+        confidence: (score * 100).toFixed(1),
+        isLowConfidence: true
       };
-    } catch (err) {
-      console.error("Classification Error:", err);
-      throw new Error("فشلت عملية التحليل. يرجى المحاولة مرة أخرى.");
     }
+
+    const label = top.className.toLowerCase();
+    const key = MODEL_LABEL_MAP[label] || label;
+    const meta = WASTE_TYPES[key] || WASTE_TYPES.unknown;
+
+    return {
+      ...meta,
+      confidence: (score * 100).toFixed(1),
+      key
+    };
   }
 }
 
-const serviceInstance = new ModelService();
-export default serviceInstance;
+export default new ModelService();

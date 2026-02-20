@@ -2,6 +2,7 @@ export const WASTE_TYPES = {
   plastic: {
     name: "Plastic",
     arabic: "بلاستيك",
+    icon: "CupSoda",
     color: "bg-blue-500",
     text: "text-blue-700",
     bg: "bg-blue-50",
@@ -9,11 +10,12 @@ export const WASTE_TYPES = {
     disposal: "اغسل العبوة جيداً وضعها في حاوية إعادة تدوير البلاستيك.",
     tip: "تجنب استخدام البلاستيك لمرة واحدة للمساهمة في حماية المحيطات.",
     points: 10,
-    impact: 0.5 // kg CO2 saved per item
+    impact: 0.5
   },
   paper: {
     name: "Paper",
     arabic: "ورق وكارتون",
+    icon: "FileText",
     color: "bg-green-500",
     text: "text-green-700",
     bg: "bg-green-50",
@@ -26,6 +28,7 @@ export const WASTE_TYPES = {
   metal: {
     name: "Metal",
     arabic: "معدن",
+    icon: "Container",
     color: "bg-orange-500",
     text: "text-orange-700",
     bg: "bg-orange-50",
@@ -38,6 +41,7 @@ export const WASTE_TYPES = {
   glass: {
     name: "Glass",
     arabic: "زجاج",
+    icon: "FlaskConical",
     color: "bg-teal-500",
     text: "text-teal-700",
     bg: "bg-teal-50",
@@ -50,6 +54,7 @@ export const WASTE_TYPES = {
   clothes: {
     name: "Clothes",
     arabic: "ملابس",
+    icon: "Shirt",
     color: "bg-purple-500",
     text: "text-purple-700",
     bg: "bg-purple-50",
@@ -62,6 +67,7 @@ export const WASTE_TYPES = {
   shoes: {
     name: "Shoes",
     arabic: "أحذية",
+    icon: "Footprints",
     color: "bg-amber-700",
     text: "text-amber-900",
     bg: "bg-amber-50",
@@ -74,6 +80,7 @@ export const WASTE_TYPES = {
   cardboard: {
     name: "Cardboard",
     arabic: "كرتون مقوى",
+    icon: "Package",
     color: "bg-yellow-700",
     text: "text-yellow-900",
     bg: "bg-yellow-50",
@@ -86,6 +93,7 @@ export const WASTE_TYPES = {
   biological: {
     name: "Biological",
     arabic: "نفايات عضوية",
+    icon: "Apple",
     color: "bg-emerald-800",
     text: "text-emerald-900",
     bg: "bg-emerald-50",
@@ -98,6 +106,7 @@ export const WASTE_TYPES = {
   battery: {
     name: "Battery",
     arabic: "بطاريات",
+    icon: "Battery",
     color: "bg-red-600",
     text: "text-red-800",
     bg: "bg-red-50",
@@ -110,6 +119,7 @@ export const WASTE_TYPES = {
   unknown: {
     name: "Unknown / Low Confidence",
     arabic: "غير معروف / دقة منخفضة",
+    icon: "HelpCircle",
     color: "bg-gray-400",
     text: "text-gray-600",
     bg: "bg-gray-100",
