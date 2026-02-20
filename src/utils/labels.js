@@ -1,0 +1,135 @@
+export const WASTE_TYPES = {
+  plastic: {
+    name: "Plastic",
+    arabic: "بلاستيك",
+    color: "bg-blue-500",
+    text: "text-blue-700",
+    bg: "bg-blue-50",
+    description: "العبوات والمواد البلاستيكية القابلة لإعادة التدوير.",
+    disposal: "اغسل العبوة جيداً وضعها في حاوية إعادة تدوير البلاستيك.",
+    tip: "تجنب استخدام البلاستيك لمرة واحدة للمساهمة في حماية المحيطات.",
+    points: 10,
+    impact: 0.5 // kg CO2 saved per item
+  },
+  paper: {
+    name: "Paper",
+    arabic: "ورق وكارتون",
+    color: "bg-green-500",
+    text: "text-green-700",
+    bg: "bg-green-50",
+    description: "الورق، الكرتون، والمجلات والمنشورات.",
+    disposal: "قم بطي الصناديق الكرتونية وتأكد من جفاف الورق.",
+    tip: "إعادة تدوير طن واحد من الورق ينقذ 17 شجرة من القطع.",
+    points: 15,
+    impact: 0.8
+  },
+  metal: {
+    name: "Metal",
+    arabic: "معدن",
+    color: "bg-orange-500",
+    text: "text-orange-700",
+    bg: "bg-orange-50",
+    description: "علب الألمنيوم، القصدير، والخردة المعدنية.",
+    disposal: "اشطف العلب جيداً وأزل أي ملصقات بلاستيكية إن أمكن.",
+    tip: "يمكن إعادة تدوير الألمنيوم عدد لا نهائي من المرات دون فقدان جودته.",
+    points: 20,
+    impact: 1.2
+  },
+  glass: {
+    name: "Glass",
+    arabic: "زجاج",
+    color: "bg-teal-500",
+    text: "text-teal-700",
+    bg: "bg-teal-50",
+    description: "الزجاجات والبرطمانات الزجاجية بمختلف أنواعها.",
+    disposal: "أزل الأغطية واشطف الزجاجة قبل وضعها في الحاوية المخصصة.",
+    tip: "الزجاج مادة مستدامة تماماً، يمكن إعادة تدويره إلى الأبد.",
+    points: 20,
+    impact: 1.5
+  },
+  clothes: {
+    name: "Clothes",
+    arabic: "ملابس",
+    color: "bg-purple-500",
+    text: "text-purple-700",
+    bg: "bg-purple-50",
+    description: "الملابس والمنسوجات القديمة أو التالفة.",
+    disposal: "تبرع بها للجمعيات الخيرية أو ضعها في صناديق تدوير الملابس.",
+    tip: "إعادة تدوير المنسوجات توفر آلاف الجالونات من المياه سنوياً.",
+    points: 30,
+    impact: 2.0
+  },
+  shoes: {
+    name: "Shoes",
+    arabic: "أحذية",
+    color: "bg-amber-700",
+    text: "text-amber-900",
+    bg: "bg-amber-50",
+    description: "الأحذية الرياضية، الجلود، والأحذية القديمة.",
+    disposal: "تبرع بالأحذية الجيدة، وضع التالفة في مراكز التجميع المخصصة.",
+    tip: "تستغرق الأحذية الرياضية قروناً لتتحلل في المكبات، تدويرها هو الحل.",
+    points: 25,
+    impact: 1.8
+  },
+  cardboard: {
+    name: "Cardboard",
+    arabic: "كرتون مقوى",
+    color: "bg-yellow-700",
+    text: "text-yellow-900",
+    bg: "bg-yellow-50",
+    description: "صناديق الشحن والتغليف الكرتونية.",
+    disposal: "فكك الصناديق واجعلها مسطحة لسهولة التدوير.",
+    tip: "الكرتون المقوى من أكثر المواد قيمة في سوق إعادة التدوير.",
+    points: 15,
+    impact: 0.9
+  },
+  biological: {
+    name: "Biological",
+    arabic: "نفايات عضوية",
+    color: "bg-emerald-800",
+    text: "text-emerald-900",
+    bg: "bg-emerald-50",
+    description: "بقايا الطعام، قشور الفواكه والخضروات.",
+    disposal: "ضعها في حاوية التسميد العضوي (Compost).",
+    tip: "النفايات العضوية يمكن تحويلها إلى سماد غني للزراعة.",
+    points: 20,
+    impact: 1.1
+  },
+  battery: {
+    name: "Battery",
+    arabic: "بطاريات",
+    color: "bg-red-600",
+    text: "text-red-800",
+    bg: "bg-red-50",
+    description: "البطاريات الجافة، الليثيوم، وبطاريات الهواتف.",
+    disposal: "خطر! لا ترمها في القمامة العادية، سلمها لنقاط تجميع البطاريات.",
+    tip: "تحتوي البطاريات على مواد سامة قد تلوث المياه الجوفية إذا لم تدوّر.",
+    points: 50,
+    impact: 3.0
+  },
+  unknown: {
+    name: "Unknown / Low Confidence",
+    arabic: "غير معروف / دقة منخفضة",
+    color: "bg-gray-400",
+    text: "text-gray-600",
+    bg: "bg-gray-100",
+    description: "لم يتمكن الذكاء الاصطناعي من تحديد المادة بدقة كافية.",
+    disposal: "حاول التقاط صورة أوضح أو بزاوية مختلفة.",
+    tip: "تأكد من وجود إضاءة جيدة وخلفية سادة للحصول على أفضل النتائج.",
+    points: 0,
+    impact: 0
+  }
+};
+
+export const MODEL_LABEL_MAP = {
+  "plastic": "plastic",
+  "paper": "paper",
+  "papper": "paper",
+  "metal": "metal",
+  "glass": "glass",
+  "clothes": "clothes",
+  "shoes": "shoes",
+  "cardboard": "cardboard",
+  "biological": "biological",
+  "battery": "battery"
+};
