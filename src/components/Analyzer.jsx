@@ -12,6 +12,7 @@ const Analyzer = () => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [activeModel, setActiveModel] = useState("mini");
   const [showModelCategories, setShowModelCategories] = useState(true);
+  const [categories, setCategories] = useState([]);
 
   const fileInputRef = useRef(null);
   const imageRef = useRef(null);
@@ -26,6 +27,7 @@ const Analyzer = () => {
     try {
       modelService.setModelSize(size);
       await modelService.loadModel();
+      setCategories(modelService.getModelCategories(size));
       setError(null);
     } catch (err) {
       setError("فشل تحميل نموذج الذكاء الاصطناعي");
@@ -119,7 +121,7 @@ const Analyzer = () => {
             className="glass-panel overflow-hidden border-white/5 bg-slate-900/40"
           >
             <div className="p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-               {modelService.getModelCategories(activeModel).map((cat, i) => (
+               {categories.map((cat, i) => (
                  <motion.div 
                    key={i} 
                    whileHover={{ y: -5, scale: 1.02 }}
